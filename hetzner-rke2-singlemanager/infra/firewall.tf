@@ -5,14 +5,14 @@ resource "hcloud_firewall" "rke2" {
     direction  = "in"
     protocol   = "tcp"
     port       = "22"
-    source_ips = ["0.0.0.0/0", "::/0"]
+    source_ips = ["0.0.0.0/0"]
   }
 
   rule {
     direction  = "in"
     protocol   = "tcp"
     port       = "6443"
-    source_ips = ["0.0.0.0/0", "::/0"]
+    source_ips = ["0.0.0.0/0"]
   }
 
   rule {
@@ -47,13 +47,13 @@ resource "hcloud_firewall" "rke2" {
     direction  = "in"
     protocol   = "tcp"
     port       = "30000-32767"
-    source_ips = ["0.0.0.0/0", "::/0"]
+    source_ips = ["0.0.0.0/0"]
   }
 
   rule {
     direction  = "in"
     protocol   = "udp"
     port       = "30000-32767"
-    source_ips = ["0.0.0.0/0", "::/0"]
+    source_ips = ["0.0.0.0/0"]
   }
 }

@@ -8,6 +8,11 @@ resource "hcloud_server" "nodes" {
 
   ssh_keys = [data.hcloud_ssh_key.rancher_key.id]
 
+  public_net {
+    ipv4_enabled = true
+    ipv6_enabled = false
+  }
+
   labels = {
     cluster = "rke2-demo"
     role    = each.value.role
