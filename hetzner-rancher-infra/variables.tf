@@ -54,8 +54,8 @@ variable "servers" {
   }))
 
   default = {
-    rancher01 = { name = "rancher01", ip = "10.0.1.11" }
-    rancher02 = { name = "rancher02", ip = "10.0.1.12" }
-    rancher03 = { name = "rancher03", ip = "10.0.1.13" }
+    skyney_rancher_1 = { name = "skyney-rancher-1", ip = "10.0.1.11" }
+    skyney_rancher_2 = { name = "skyney-rancher-2", ip = "10.0.1.12" }
+    skyney_rancher_3 = { name = "skyney-rancher-3", ip = "10.0.1.13" }
   }
 }

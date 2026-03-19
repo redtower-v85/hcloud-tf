@@ -1,0 +1,33 @@
+# Optional: keepalived for a shared VIP on the HAProxy pair (rancher-net).
+# Install: apt install keepalived
+# VIP 10.0.1.20 — point DNS or clients to this for 6443/80/443.
+#
+# On haproxy01 (MASTER):
+#   state MASTER, priority 101
+# On haproxy02 (BACKUP):
+#   state BACKUP, priority 100
+# Replace <interface> with the interface name on rancher-net (e.g. eth1 or ens10).
+
+vrrp_script chk_haproxy {
+  script "killall -0 haproxy"
+  interval 2
+  weight 2
+}
+
+vrrp_instance VI_1 {
+  state MASTER
+  interface <interface>
+  virtual_router_id 51
+  priority 101
+  advert_int 1
+  authentication {
+    auth_type PASS
+    auth_pass <shared-secret>
+  }
+  virtual_ipaddress {
+    10.0.1.20/24
+  }
+  track_script {
+    chk_haproxy
+  }
+}
