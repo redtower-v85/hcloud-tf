@@ -1,5 +1,5 @@
 resource "hcloud_server" "nodes" {
-  for_each = var.servers
+  for_each = local.servers
 
   name        = each.value.name
   server_type = var.server_type
@@ -18,10 +18,15 @@ resource "hcloud_server" "nodes" {
     role    = each.value.role
     name    = each.value.name
   }
+
+  # Install Tailscale on boot and join tailnet with tag ssh-server, enable Tailscale SSH
+  user_data = sensitive(templatefile("${path.module}/cloud-init-tailscale.yaml.tpl", {
+    auth_key = tailscale_tailnet_key.ssh_servers.key
+  }))
 }
 
 resource "hcloud_server_network" "nodes" {
-  for_each = var.servers
+  for_each = local.servers
 
   server_id  = hcloud_server.nodes[each.key].id
   network_id = hcloud_network.rke2.id

@@ -6,5 +6,9 @@ terraform {
       source  = "hetznercloud/hcloud"
       version = "~> 1.60"
     }
+    tailscale = {
+      source  = "tailscale/tailscale"
+      version = "~> 0.26"
+    }
   }
 }

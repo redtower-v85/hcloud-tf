@@ -46,18 +46,21 @@ variable "subnet_cidr" {
   default     = "10.10.1.0/24"
 }
 
-variable "servers" {
-  description = "Server definitions"
-  type = map(object({
-    name = string
-    role = string
-    ip   = string
-  }))
+# Base name for servers. You will be prompted on plan/apply if not set (or set TF_VAR_server_name_base).
+variable "server_name_base" {
+  description = "Base name for cluster nodes. Servers will be named <base>01, <base>02, etc. (e.g. 'rnch' -> rnch01, rnch02, ...)."
+  type        = string
+}
 
-  default = {
-    rnch01 = { name = "rnch01", role = "manager", ip = "10.10.1.11" }
-    rnch02 = { name = "rnch02", role = "worker",  ip = "10.10.1.12" }
-    rnch03 = { name = "rnch03", role = "worker",  ip = "10.10.1.13" }
-    rnch04 = { name = "rnch04", role = "worker",  ip = "10.10.1.14" }
-  }
+variable "node_count" {
+  description = "Number of nodes (first is manager, rest are workers)"
+  type        = number
+  default     = 4
+}
+
+# Tailscale. You will be prompted on plan/apply if not set (or set TF_VAR_tailscale_api_key).
+variable "tailscale_api_key" {
+  description = "Tailscale API key for your tailnet (https://login.tailscale.com/admin/settings/keys)."
+  type        = string
+  sensitive   = true
 }
