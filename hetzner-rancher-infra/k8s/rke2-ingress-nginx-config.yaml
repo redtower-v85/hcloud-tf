@@ -1,0 +1,29 @@
+# Persists the ingress-nginx settings that were previously hand-patched onto
+# kube-system/rke2-ingress-nginx-controller (those are lost on RKE2 upgrades).
+#
+# Do NOT add proxy-set-headers with a Host header here: the Rancher ingress already
+# sets Host via the upstream-vhost annotation, and a second Host header makes
+# Rancher return "400 Bad Request" (outage 2026-09-24).
+#
+# Apply from a server node:
+#   kubectl apply -f rke2-ingress-nginx-config.yaml
+# or drop into /var/lib/rancher/rke2/server/manifests/ on each server node.
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: rke2-ingress-nginx
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    controller:
+      config:
+        # HAProxy (skynet-haproxy-2) forwards 443 in TCP mode with send-proxy-v2
+        use-proxy-protocol: "true"
+        real-ip-header: "proxy_protocol"
+        use-forwarded-headers: "true"
+        compute-full-forwarded-for: "true"
+        # skynet-haproxy-2 connects to the nodes from its rancher-net IP 10.0.1.1
+        set-real-ip-from: "10.0.1.1"
+        proxy-real-ip-cidr: "10.0.1.1/32"
+        allow-snippet-annotations: "true"
+        annotation-value-wordlist: "proxy_set_header"

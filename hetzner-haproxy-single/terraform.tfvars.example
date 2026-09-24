@@ -1,9 +1,0 @@
-# Copy to terraform.tfvars and set hcloud_token
-hcloud_token = "your-hetzner-api-token"
-
-# Optional overrides
-# location     = "nbg1"
-# server_type  = "cx33"
-# network_name = "rancher-net"
-# server_name  = "skynet-haproxy-1"
-# server_ip    = "10.0.1.21"

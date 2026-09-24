@@ -1,37 +1,27 @@
-# Firewall for single HAProxy in front of RKE2: SSH, HTTP, HTTPS, K8s API.
-# Internal traffic (rancher-net) allowed for health checks and backend to RKE2.
+# Firewall for the HAProxy nodes (skynet-haproxy-1 and skynet-haproxy-2).
+# Tailnet-only: every service (SSH, 80/443, 6443, 9345, stats) is reached over
+# Tailscale, whose traffic is encrypted inside UDP and never hits these rules
+# after decapsulation. Nothing is exposed on the public IPs.
+# Do NOT add "any port from 0.0.0.0/0" rules in the console: that exposed the
+# Rancher UI, HAProxy stats and the K8s API to the internet (found 2026-09-24).
 resource "hcloud_firewall" "haproxy" {
   name = "haproxy-single-fw"
 
+  # Tailscale direct (peer-to-peer) connections; without it traffic falls back to DERP relays
   rule {
     direction  = "in"
-    protocol   = "tcp"
-    port       = "22"
-    source_ips = ["0.0.0.0/0"]
+    protocol   = "udp"
+    port       = "41641"
+    source_ips = ["0.0.0.0/0", "::/0"]
   }
 
   rule {
     direction  = "in"
-    protocol   = "tcp"
-    port       = "80"
-    source_ips = ["0.0.0.0/0"]
+    protocol   = "icmp"
+    source_ips = ["0.0.0.0/0", "::/0"]
   }
 
-  rule {
-    direction  = "in"
-    protocol   = "tcp"
-    port       = "443"
-    source_ips = ["0.0.0.0/0"]
-  }
-
-  rule {
-    direction  = "in"
-    protocol   = "tcp"
-    port       = "6443"
-    source_ips = ["0.0.0.0/0"]
-  }
-
-  # Allow from rancher-net for HAProxy health checks and internal traffic
+  # rancher-net: RKE2 nodes joining via 10.0.1.21:9345 and HAProxy backends
   rule {
     direction  = "in"
     protocol   = "tcp"

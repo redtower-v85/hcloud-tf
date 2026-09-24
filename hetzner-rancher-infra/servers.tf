@@ -1,3 +1,5 @@
+# Rancher (RKE2) server nodes. These were built by hand and adopted with the
+# import blocks below; lifecycle guards stop Terraform from ever rebuilding them.
 resource "hcloud_server" "nodes" {
   for_each = var.servers
 
@@ -13,9 +15,11 @@ resource "hcloud_server" "nodes" {
     ipv6_enabled = false
   }
 
-  labels = {
-    cluster = "rancher"
-    name    = each.value.name
+  # Create-time only attributes that cannot be read back after import;
+  # any "change" to them would force a destroy/recreate.
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes  = [ssh_keys, image, user_data, public_net]
   }
 }
 
@@ -30,4 +34,17 @@ resource "hcloud_server_network" "nodes" {
 resource "hcloud_firewall_attachment" "nodes" {
   firewall_id = hcloud_firewall.rancher.id
   server_ids  = [for s in hcloud_server.nodes : s.id]
+}
+
+import {
+  for_each = var.servers
+  to       = hcloud_server.nodes[each.key]
+  id       = each.value.id
+}
+
+# Import ID format: <server_id>-<network_id>
+import {
+  for_each = var.servers
+  to       = hcloud_server_network.nodes[each.key]
+  id       = "${each.value.id}-12020354"
 }

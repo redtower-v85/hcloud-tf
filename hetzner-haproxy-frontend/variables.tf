@@ -5,9 +5,9 @@ variable "hcloud_token" {
 }
 
 variable "location" {
-  description = "Hetzner location (nbg1 = Nuremberg)"
+  description = "Hetzner location (hel1 = Helsinki)"
   type        = string
-  default     = "nbg1"
+  default     = "hel1"
 }
 
 variable "server_type" {
@@ -37,17 +37,11 @@ variable "network_name" {
 variable "server_name" {
   description = "HAProxy server name"
   type        = string
-  default     = "skynet-haproxy-1"
+  default     = "skynet-haproxy-2"
 }
 
 variable "server_ip" {
   description = "Private IP for HAProxy server (must be in rancher-net subnet)"
   type        = string
-  default     = "10.0.1.21"
-}
-
-variable "extra_firewall_server_ids" {
-  description = "Other servers attached to haproxy-single-fw (default: skynet-haproxy-2)"
-  type        = list(number)
-  default     = [123391534]
+  default     = "10.0.1.1"
 }

@@ -1,28 +1,14 @@
-# Single HAProxy (Hetzner) — Terraform
+# RKE2 HAProxy (Hetzner): OpenTofu
 
-Provisions **1 server** (cx33) in **Nuremberg (nbg1)** on the existing **rancher-net** network, no IPv6. Server uses the **ranchertest01** SSH key for access. For use as a single HAProxy in front of an RKE2 cluster; all nodes sit on Tailnet.
+Manages **skynet-haproxy-1** (cx33, nbg1, `10.0.1.21`), the load balancer for the RKE2
+Kubernetes API (6443) and supervisor/join port (9345), in front of the three Rancher nodes.
 
-## Prerequisites
+Also owns the firewall **`haproxy-single-fw`**, which is shared with skynet-haproxy-2
+(`../hetzner-haproxy-frontend`). haproxy-2 is attached via `var.extra_firewall_server_ids`.
 
-- **rancher-net** must already exist (e.g. from `hetzner-rancher-infra`). This module does **not** create the network; it looks it up by name.
-- The private IP used for the HAProxy node (default `10.0.1.21`) must be free in the rancher-net subnet. Default node name: `skynet-haproxy-1`.
-
-## Usage
+HAProxy's own config lives on the server in `/etc/haproxy/haproxy.cfg` (not managed here).
 
 ```bash
-cp terraform.tfvars.example terraform.tfvars
-# Edit terraform.tfvars and set hcloud_token
-
-terraform init
-terraform plan
-terraform apply
+export TF_VAR_hcloud_token="<hetzner-api-token>"
+tofu init && tofu plan
 ```
-
-## Outputs
-
-- `server_public_ipv4` — public IP for SSH.
-- `server_private_ipv4` — private IP on rancher-net (10.0.1.21 by default).
-
-## Next steps
-
-See **../haproxy-pair-setup/** for example HAProxy config for RKE2 (6443, 80, 443) with Tailnet backends. No keepalived needed for a single node.

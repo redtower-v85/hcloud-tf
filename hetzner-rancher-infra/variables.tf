@@ -47,15 +47,16 @@ variable "subnet_cidr" {
 }
 
 variable "servers" {
-  description = "Server definitions"
+  description = "Rancher server nodes (Hetzner server ID, name, rancher-net IP)"
   type = map(object({
+    id   = string
     name = string
     ip   = string
   }))
 
   default = {
-    skyney_rancher_1 = { name = "skyney-rancher-1", ip = "10.0.1.11" }
-    skyney_rancher_2 = { name = "skyney-rancher-2", ip = "10.0.1.12" }
-    skyney_rancher_3 = { name = "skyney-rancher-3", ip = "10.0.1.13" }
+    skynet_rancher_01 = { id = "123421703", name = "skynet-rancher-01", ip = "10.0.1.4" }
+    skynet_rancher_02 = { id = "123421704", name = "skynet-rancher-02", ip = "10.0.1.2" }
+    skynet_rancher_03 = { id = "123421705", name = "skynet-rancher-03", ip = "10.0.1.3" }
   }
 }

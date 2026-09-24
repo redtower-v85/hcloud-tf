@@ -1,0 +1,6 @@
+# Local OpenTofu/Terraform working dirs (provider binaries, re-created by `tofu init`)
+**/.terraform/
+# Saved plans may embed variable values, including the API token
+*.tfplan
+# Per-user Claude Code settings
+**/.claude/settings.local.json

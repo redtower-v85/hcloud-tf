@@ -25,5 +25,6 @@ resource "hcloud_server_network" "haproxy" {
 
 resource "hcloud_firewall_attachment" "haproxy" {
   firewall_id = hcloud_firewall.haproxy.id
-  server_ids  = [hcloud_server.haproxy.id]
+  # skynet-haproxy-2 (managed in ../hetzner-haproxy-frontend) shares this firewall
+  server_ids = concat([hcloud_server.haproxy.id], var.extra_firewall_server_ids)
 }
